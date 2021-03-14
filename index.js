@@ -80,38 +80,32 @@ addEmployee = () => {
             message: "What is their last name? "
         },
         {
-            name: "role",
-            type: "rawlist",
-            message: "select a role",
+            name: "role", 
+            type: "list",
             choices: () => {
-                let roleArray = [];
-                for (let i = 0; i < res.length; i++) {
-                    roleArray.push(res[i].title);
-                }
-                return roleArray;
+            var roleArray = [];
+            for (let i = 0; i < res.length; i++) {
+                roleArray.push(res[i].title);
+            }
+            return roleArray;
             },
-        } ,   
-        {
-            name: "manager",
-            type: "rawlist",
-            message: "select the employee's manager",
-            choices: () => {
-                let managerArray = [];
-                for (let i = 0; i < res.length; i++) {
-                    managerArray.push(res[i].title);
-                }
-                return managerArray;
-            },
+            message: "ROLE?"
+        }
+        ]).then((answer) => {
+            let roleID;
+            for (let j = 0; j < res.length; j++) {
+            if (res[j].title == answer.role) {
+                roleID = res[j].id;
+                           }                  
         }    
        
-    ]).then((answer) => {
-        connection.query(
+          connection.query(
             "INSERT INTO employee SET ?",
             {
                 first_name: answer.first_name,
-                last_name: answer.salary,
-                role_id:answer.role_id,
-                manager_id: answer.manager
+                last_name: answer.last_name,
+                role_id: roleID,
+                manager_id: 3
             },
             (err, res) => {
                 if(err)throw err;
@@ -188,7 +182,7 @@ addRole = () => {
             "INSERT INTO role SET ?",
             {
                 title: answer.title,
-                salary: answer.salary,
+                salary: answer.salary || 0,
                 department_id: deptID
             },
             (err, res) => {
