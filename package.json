@@ -1,0 +1,25 @@
+{
+  "name": "employeetracker",
+  "version": "1.0.0",
+  "description": "Creation of a Content Management System to manage a company's employees using Node, Inquirer and MySQL.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sallyxp/Employee-Tracker.git"
+  },
+  "author": "Sally Rodgers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sallyxp/Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/sallyxp/Employee-Tracker#readme",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "inquirer": "^8.0.0",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {}
+}
