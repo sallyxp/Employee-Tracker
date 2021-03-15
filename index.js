@@ -1,6 +1,7 @@
 //dependencies
 const mysql = require("mysql");
 const inquirer = require("inquirer");
+const cTable = require("console.table");
 
 //connecting to database 
 const connection = mysql.createConnection({
@@ -24,23 +25,23 @@ Start = () => {
             "Add a new department",
             "Add a new role",
             "Add a new employee",
-            "TO DO:",    
-            "EMPLOYEES.",
-                "DEPARTMENTS.",
-                "ROLES.",     
+            "View departments",
+            "View roles",
+            "View employees",  
+            "Update employee roles",  
                 "End"
         ]
     }).then((answer) => {
         switch (answer.action) {
-            case "EMPLOYEES.":
-               //To do
-                break;
-                case "DEPARTMENTS.":
-                //To do
-                break;
-                case "ROLES":
-                //to do
-                break;
+                case "View departments":
+                  showDepartments();
+                  break;
+                case "View roles":
+                  showRoles();
+                  break; 
+                case "View employees":
+                  showEmployees();
+                  break;  
                 case "Add a new department":
                   addDepartment();
                   break;
@@ -49,6 +50,9 @@ Start = () => {
                   break;
                 case "Add a new employee":
                   addEmployee();
+                  break;
+                case "Update employee roles":
+                  updateEmployeeRole();
                   break;
             case "End": 
                 promptEnd();
@@ -60,7 +64,131 @@ Start = () => {
 };
 
 
-//********************* */
+//********************* 
+// View Departments
+//*********************
+
+const showDepartments = () => {
+    console.log('Selecting all departments...\n');
+    connection.query('SELECT * FROM department', (err, res) => {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.table(res);
+
+      Start();
+    })
+  }
+//*****/
+
+//********************* 
+// View Roles
+//*********************
+
+const showRoles = () => {
+    console.log('Selecting all roles...\n');
+    connection.query('SELECT * FROM role', (err, res) => {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.table(res);
+      Start();
+    })
+  }
+
+
+
+
+  
+//******************************************** 
+// View Employees
+//**********************************************
+
+const showEmployees = () => {
+    console.log('Selecting all employees...\n');
+    connection.query('SELECT * FROM employee', (err, res) => {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.table(res);
+      Start();
+    })
+  }
+//*****/
+
+//*********************************************
+// updateEmployeeRole
+// Update roles in the Employee table
+//*********************************************
+function updateEmployeeRole() {
+// UPDATE EMPLOYEE ROLE
+
+    connection.query(
+        "SELECT * FROM employee;",
+        (err, res) => {
+            if (err) throw err;
+            inquirer.prompt([ 
+                {
+                    type: "rawlist",
+                    message: "Please specify the employee's last name:",
+                    name: "lastName",
+                    choices: () => {
+                        var lastName = [];
+                        for (var i = 0; i < res.length; i++) {
+                            lastName.push(res[i].last_name);
+                        }
+                        return lastName;
+                    }
+                },
+                {
+                    type: "rawlist",
+                    message: "Please specify the employee's new role:",
+                    name: "role",
+                    choices: selectRole()
+                }
+            ]).then((value) => {
+                let roleId = selectRole().indexOf(value.role) + 1;
+                connection.query(`UPDATE employee SET role_id = ${roleId} WHERE last_name = ?`,
+                    [value.lastName],
+                    (err, res) => {
+                        
+                    if (err) throw err;
+                    console.log("Employee role has been updated!");
+                 
+                    Start();
+                    }
+                )
+            })
+        })
+}//***************************************************************** */
+// MANAGER ARRAY SET UP FOR EMPLOYEE ADDITION ____________________
+let managersArray = [];
+function selectManager() {
+  connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
+    if (err) throw err
+    for (var i = 0; i < res.length; i++) {
+      managersArray.push(res[i].first_name);
+    }
+  })
+  return managersArray;
+}
+//********************************************* */
+// role list
+//select role from array list
+//********************************************* */
+let roleArray = [];                                            
+function selectRole() {
+  connection.query("SELECT * FROM role", function(err, res) {
+    if (err) throw err
+    for (var i = 0; i < res.length; i++) {
+      roleArray.push(res[i].title);
+    }
+  })
+  return roleArray;
+}
+
+
+
+
+//*********************************************/
+
 addEmployee = () => {
     // need to add a role_id and manager_id for this employee
     // so need to query it first. Both role id and manager_id in same table.
@@ -83,20 +211,31 @@ addEmployee = () => {
             name: "role", 
             type: "list",
             choices: () => {
-            var roleArray = [];
+            let roleArray = [];
             for (let i = 0; i < res.length; i++) {
                 roleArray.push(res[i].title);
             }
             return roleArray;
             },
-            message: "ROLE?"
-        }
+            message: "What will be their role?"
+        }, 
+        
+        {
+                name: "choice",
+                type: "rawlist",
+                message: "Who is managing the new employee? ",
+                choices: selectManager()
+        },
         ]).then((answer) => {
             let roleID;
+            
             for (let j = 0; j < res.length; j++) {
             if (res[j].title == answer.role) {
                 roleID = res[j].id;
-                           }                  
+            }
+            let managerID;
+            managerID = selectManager().indexOf(answer.choice) + 1;
+                                           
         }    
        
           connection.query(
@@ -108,8 +247,8 @@ addEmployee = () => {
                 manager_id: 3
             },
             (err, res) => {
-                if(err)throw err;
-                console.log("New role added");
+                if (err)throw err;
+                console.log("New employee added");
                 Start();
             }
         )
@@ -161,7 +300,7 @@ addRole = () => {
         },
         {
             name: "departmentid",
-            type: "rawlist",
+            type: "list",
             choices: () => {
                 let deptArray = [];
                 for (let i = 0; i < res.length; i++) {
@@ -197,5 +336,7 @@ addRole = () => {
 Start();
 
 promptEnd = () => {
+    console.log (" Thank you for using the Employee Tracker. ");
+             
     connection.end();
 }
