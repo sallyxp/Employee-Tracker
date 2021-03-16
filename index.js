@@ -2,6 +2,9 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
+const chalk = require("chalk");
+const log = console.log;
+
 
 //connecting to database 
 const connection = mysql.createConnection({
@@ -12,7 +15,16 @@ const connection = mysql.createConnection({
     database: "employeetracker_db"
 })
 
-
+//connecting to server and database 
+connection.connect(function(err){
+    if (err) throw err;
+    console.log (chalk.bold.bgMagenta("======================================"));
+    console.log ("");
+    console.log (chalk.bold.bgMagenta("   WELCOME TO THE EMPLOYEE TRACKER   "));
+    console.log ("");
+    console.log (chalk.bold.bgMagenta("======================================"));
+       
+    })
 
 //main menu/ start app
 Start = () => {
@@ -159,16 +171,17 @@ function updateEmployeeRole() {
         })
 }//***************************************************************** */
 // MANAGER ARRAY SET UP FOR EMPLOYEE ADDITION ____________________
-let managersArray = [];
+let managersArr = [];
 function selectManager() {
   connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
     if (err) throw err
     for (var i = 0; i < res.length; i++) {
-      managersArray.push(res[i].first_name);
+      managersArr.push(res[i].first_name);
     }
   })
-  return managersArray;
+  return managersArr;
 }
+
 //********************************************* */
 // role list
 //select role from array list
@@ -233,9 +246,9 @@ addEmployee = () => {
             if (res[j].title == answer.role) {
                 roleID = res[j].id;
             }
-            let managerID;
-            managerID = selectManager().indexOf(answer.choice) + 1;
-                                           
+        
+         var managerId = selectManager().indexOf(answer.choice) + 1;
+                                  
         }    
        
           connection.query(
@@ -244,7 +257,7 @@ addEmployee = () => {
                 first_name: answer.first_name,
                 last_name: answer.last_name,
                 role_id: roleID,
-                manager_id: 3
+                manager_id: managerId
             },
             (err, res) => {
                 if (err)throw err;
