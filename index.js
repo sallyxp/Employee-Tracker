@@ -18,13 +18,14 @@ const connection = mysql.createConnection({
 //connecting to server and database 
 connection.connect(function(err){
     if (err) throw err;
+    console.log ("\n"); 
     console.log ("");
     console.log (chalk.bold.bgMagenta("======================================"));
     console.log ("");
     console.log (chalk.bold.bgMagenta("   WELCOME TO THE EMPLOYEE TRACKER   "));
     console.log ("");
     console.log (chalk.bold.bgMagenta("======================================"));
-       
+    console.log ("\n");  
     })
 
 //main menu/ start app
@@ -38,6 +39,7 @@ Start = () => {
             "Add a new department",
             "Add a new role",
             "Add a new employee",
+            "Total budget by department",
             "View departments",
             "View employees by manager",
             "View roles",
@@ -70,6 +72,9 @@ Start = () => {
                   break;
                 case "Add a new employee":
                   addEmployee();
+                  break;
+                case "Total budget by department":
+                  showTotalBudgetbyDept();
                   break;
                 case "Update employee manager":
                   updateEmployeeManager();
@@ -135,13 +140,35 @@ const showEmployees = () => {
 //**********************************************************************
 
 const showEmpbyManager = () => {
-    console.log('Selecting all departments...\n');
+    console.log('Displaying all employees by their Manager..\n');
     connection.query('SELECT emp.first_name, emp.last_name, emp.manager_id,' 
     + 'concat(manager.first_name, " ", manager.last_name) as Manager ' 
     +  'FROM employee as emp ' 
     +  'LEFT JOIN employee as manager '
     + 'ON emp.manager_id = manager.id '
     + ' ORDER BY manager_id',
+    (err, res) => {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.table(res);
+
+      Start();
+    })
+  }
+
+//******************************************** 
+// View Total Budget by Department
+//**********************************************
+
+const showTotalBudgetbyDept = () => {
+    console.log('Displaying all employees by their Manager..\n');
+    connection.query('SELECT dept.name, sum(salary)' 
+    + 'FROM employee as emp '
+    + 'INNER JOIN role as role '
+    + 'ON emp.role_id = role.id '
+    + 'INNER JOIN department as dept '
+    + 'ON role.department_id = dept.id '
+    + 'GROUP BY salary, dept.name',
     (err, res) => {
       if (err) throw err;
       // Log all results of the SELECT statement
