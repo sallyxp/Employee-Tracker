@@ -39,6 +39,7 @@ Start = () => {
             "Add a new role",
             "Add a new employee",
             "View departments",
+            "View employees by manager",
             "View roles",
             "View employees",  
             "Update employee manager",
@@ -53,9 +54,14 @@ Start = () => {
                 case "View roles":
                   showRoles();
                   break; 
-                case "View employees":
+                case "View employees by manager":
+                   showEmpbyManager();
+                   //showDepartments();
+                    break; 
+                  case "View employees":
                   showEmployees();
                   break;  
+                  
                 case "Add a new department":
                   addDepartment();
                   break;
@@ -124,6 +130,29 @@ const showEmployees = () => {
     })
   }
 
+ //********************************************************************* 
+// View Employees by manager
+//**********************************************************************
+
+const showEmpbyManager = () => {
+    console.log('Selecting all departments...\n');
+    connection.query('SELECT emp.first_name, emp.last_name, emp.manager_id,' 
+    + 'concat(manager.first_name, " ", manager.last_name) as Manager ' 
+    +  'FROM employee as emp ' 
+    +  'LEFT JOIN employee as manager '
+    + 'ON emp.manager_id = manager.id '
+    + ' ORDER BY manager_id',
+    (err, res) => {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.table(res);
+
+      Start();
+    })
+  }
+
+
+//*****/ 
   //*****************************************************************************/  
 // updateManagerRole
 // Update manager in the Employee table - ability to change Employee's manager
