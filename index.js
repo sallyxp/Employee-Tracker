@@ -18,6 +18,7 @@ const connection = mysql.createConnection({
 //connecting to server and database 
 connection.connect(function(err){
     if (err) throw err;
+    console.log ("");
     console.log (chalk.bold.bgMagenta("======================================"));
     console.log ("");
     console.log (chalk.bold.bgMagenta("   WELCOME TO THE EMPLOYEE TRACKER   "));
@@ -40,8 +41,9 @@ Start = () => {
             "View departments",
             "View roles",
             "View employees",  
+            "Update employee manager",
             "Update employee roles",  
-                "End"
+            "End"
         ]
     }).then((answer) => {
         switch (answer.action) {
@@ -62,6 +64,9 @@ Start = () => {
                   break;
                 case "Add a new employee":
                   addEmployee();
+                  break;
+                case "Update employee manager":
+                  updateEmployeeManager();
                   break;
                 case "Update employee roles":
                   updateEmployeeRole();
@@ -104,12 +109,7 @@ const showRoles = () => {
       console.table(res);
       Start();
     })
-  }
-
-
-
-
-  
+  }  
 //******************************************** 
 // View Employees
 //**********************************************
@@ -123,7 +123,58 @@ const showEmployees = () => {
       Start();
     })
   }
-//*****/
+
+  //*****************************************************************************/  
+// updateManagerRole
+// Update manager in the Employee table - ability to change Employee's manager
+//*****************************************************************************/
+function updateEmployeeManager() {
+    // UPDATE EMPLOYEE MANAGER
+
+    connection.query(
+        "SELECT * FROM employee;",
+        (err, res) => {
+            if (err) throw err;
+            inquirer.prompt([
+                {
+                    type: "rawlist",
+                    message: "Please specify the new MANAGER's last name:",
+                    name: "lastName",
+                    choices: () => {
+                        var lastName = [];
+                        for (var i = 0; i < res.length; i++) {
+                            lastName.push(res[i].last_name);
+                        }
+                        return lastName;
+                    }
+                },
+                {
+                    type: "input",
+                    message: "Please specify the ID of the employee we are changing:",
+                    name: "id",
+                   
+                }
+            ]).then(answer => {
+                var managerId;
+                for (let j = 0; j < res.length; j++) {
+                    if (res[j].last_name == answer.lastName) {
+                        managerId = res[j].id;
+                    }
+                    
+                }
+                connection.query(`UPDATE employee SET manager_id = ${managerId} WHERE id = ?`,
+                    [answer.id],
+                    (err, res) => {
+
+                        if (err) throw err;
+                        console.log("Employee manager has been updated!");
+                        Start();
+                    }
+                )
+            })
+        })
+}
+//************************************************** */
 
 //*********************************************
 // updateEmployeeRole
@@ -169,20 +220,35 @@ function updateEmployeeRole() {
                 )
             })
         })
-}//***************************************************************** */
+}
+//***************************************************************** */
 // MANAGER ARRAY SET UP FOR EMPLOYEE ADDITION ____________________
 let managersArr = [];
 function selectManager() {
-  connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
+  connection.query("SELECT * FROM employee", function(err, res) {
     if (err) throw err
     for (var i = 0; i < res.length; i++) {
-      managersArr.push(res[i].first_name);
+      managersArr.push(res[i].last_name);
     }
   })
   return managersArr;
 }
 
 //********************************************* */
+//********************************************** */
+managerArray = [];
+const chooseManager = () => {
+    connection.query(
+        "SELECT * from employee",
+        (err, res) => {
+            if (err) throw err;
+            for (var i = 0; i < res.length; i++) {
+                managerArray.push(res[i].manager_id);
+            }
+        });
+    return managerArray;
+}
+//*************************************************** */
 // role list
 //select role from array list
 //********************************************* */
