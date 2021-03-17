@@ -4,7 +4,7 @@ Creation of a Content Management System (CMS) to manage a company's employees us
 The task was to create a database from the assigned schema and the command line application should allow the users to:
  - add departments, roles, employees
  - view departments, roles, employees
- - update employee roles
+ - update employee roles 
 
  In addition some bonus features were also requested:
  - update employee manager
