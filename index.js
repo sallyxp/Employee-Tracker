@@ -20,75 +20,82 @@ connection.connect(function(err){
     if (err) throw err;
     console.log ("\n"); 
     console.log ("");
-    console.log (chalk.bold.bgMagenta("======================================"));
+    console.log (chalk.bold.bgCyan("======================================"));
     console.log ("");
-    console.log (chalk.bold.bgMagenta("   WELCOME TO THE EMPLOYEE TRACKER   "));
+    console.log (chalk.bold.bgMagenta(`   WELCOME TO THE EMPLOYEE TRACKER   `));
     console.log ("");
-    console.log (chalk.bold.bgMagenta("======================================"));
+    console.log (chalk.bold.bgCyan("======================================"));
     console.log ("\n");  
     })
 
 //main menu/ start app
 Start = () => {
     inquirer
-    .prompt({
-        name: "action",
-        type: "list",
-        message: "Please select from the following choices:",
-        choices: [
-            "Add a new department",
-            "Add a new role",
-            "Add a new employee",
-            "Total budget by department",
-            "View departments",
-            "View employees by manager",
-            "View roles",
-            "View employees",  
-            "Update employee manager",
-            "Update employee roles",  
-            "End"
-        ]
-    }).then((answer) => {
-        switch (answer.action) {
-                case "View departments":
-                  showDepartments();
-                  break;
-                case "View roles":
-                  showRoles();
-                  break; 
-                case "View employees by manager":
-                   showEmpbyManager();
-                   //showDepartments();
-                    break; 
-                  case "View employees":
-                  showEmployees();
-                  break;  
-                  
+        .prompt({
+            name: "action",
+            type: "list",
+            message: "Please select from the following choices:",
+            choices: [
+                "Add a new department",
+                "Add a new role",
+                "Add a new employee",
+                "Delete an employee",
+                "Show detailed employee info",
+                "Total budget by department",
+                "View departments",
+                "View employees",
+                "View employees by manager",
+                "View roles",
+                "Update employee manager",
+                "Update employee roles",
+                "End"
+            ]
+        }).then((answer) => {
+            switch (answer.action) {
                 case "Add a new department":
-                  addDepartment();
-                  break;
+                    addDepartment();
+                    break;
                 case "Add a new role":
-                  addRole();
-                  break;
+                    addRole();
+                    break;
                 case "Add a new employee":
-                  addEmployee();
-                  break;
+                    addEmployee();
+                    break;
+                case "Delete an employee":
+                    deleteEmployee();
+                    break;
+                case "Show detailed employee info":
+                    showDetailedEmployees();
+                    break;
                 case "Total budget by department":
-                  showTotalBudgetbyDept();
-                  break;
+                    showTotalBudgetbyDept();
+                    break;
+                case "View departments":
+                    showDepartments();
+                    break;
+                case "View employees":
+                    showEmployees();
+                    break;
+                case "View employees by manager":
+                    showEmpbyManager();
+                    //showDepartments();
+                    break;
+                case "View roles":
+                    showRoles();
+                    break;
                 case "Update employee manager":
-                  updateEmployeeManager();
-                  break;
+                    updateEmployeeManager();
+                    break;
                 case "Update employee roles":
-                  updateEmployeeRole();
-                  break;
-            case "End": 
-                promptEnd();
-                break;
-            default:
-                break;
-        }
-    })
+                    updateEmployeeRole();
+                    break;
+                case "End":
+                    promptEnd();
+                    break;
+                default:
+                    break;
+            }
+        })
 };
 
 
@@ -156,6 +163,30 @@ const showEmpbyManager = () => {
     })
   }
 
+//***************************************************************************
+// View Employees by Dept with Salary */
+//*************************************************************************** */
+
+const showDetailedEmployees = () => {
+    console.log('Displaying all employees by their Dept..\n');
+    connection.query('SELECT emp.id, concat(emp.first_name, " ", emp.last_name) as Name,  role.salary, dept.name'
+    + ' FROM employee as emp '
+    + ' INNER JOIN role as role '
+    + ' ON emp.role_id = role.id '
+    + ' INNER JOIN department as dept '
+    + ' ON role.department_id = dept.id '
+    + ' ORDER BY dept.name',
+     (err, res) => {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.table(res);
+    Start();
+    })
+  }
+
+
+
+
 //******************************************** 
 // View Total Budget by Department
 //**********************************************
@@ -178,10 +209,8 @@ const showTotalBudgetbyDept = () => {
     })
   }
 
-
-//*****/ 
-  //*****************************************************************************/  
-// updateManagerRole
+//*****************************************************************************/  
+// updateManagerRole within Employee table
 // Update manager in the Employee table - ability to change Employee's manager
 //*****************************************************************************/
 function updateEmployeeManager() {
@@ -230,7 +259,44 @@ function updateEmployeeManager() {
             })
         })
 }
-//************************************************** */
+//*****************************************************************************/
+//delete an Employee
+//*****************************************************************************/  
+function deleteEmployee() {
+    // this function will delete a given employee
+    connection.query(
+        "SELECT employee.id, employee.first_name, employee.last_name FROM employee;",
+        (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            inquirer.prompt([
+                {
+                    type: "input",
+                    message: "Please choose the ID of the employee to delete:",
+                    name: "employee"
+                },
+            ]).then((answer) => {
+                connection.query(
+                    `DELETE FROM employee WHERE id = ?;`,
+                    [answer.employee],
+                    (err, res) => {
+                        if (err) throw err;
+                        console.log("Your employee has been deleted!");
+                        console.table(res);
+                        Start();
+                    })
+            })
+        })
+}
+ 
+//************************************************************************************ */
+//delete a role
+// if a role is set in existing records - you do not want to delete associated records.
+// this function will delete a given role from the Role table.
+//firstly any associated employee records will be updated - role id = 0 
+//the the record will be deleted.
+// so will update any roles to 0
+//***************************************************************************************/  
 
 //*********************************************
 // updateEmployeeRole
@@ -238,7 +304,7 @@ function updateEmployeeManager() {
 //*********************************************
 function updateEmployeeRole() {
 // UPDATE EMPLOYEE ROLE
-
+//************************************************************************* */
     connection.query(
         "SELECT * FROM employee;",
         (err, res) => {
@@ -278,19 +344,19 @@ function updateEmployeeRole() {
         })
 }
 //***************************************************************** */
-// MANAGER ARRAY SET UP FOR EMPLOYEE ADDITION ____________________
-let managersArr = [];
+// MANAGER ARRAY SET UP FOR EMPLOYEE ADDITION 
+//***************************************************************** */
+let managerArr = [];
 function selectManager() {
   connection.query("SELECT * FROM employee", function(err, res) {
     if (err) throw err
     for (var i = 0; i < res.length; i++) {
-      managersArr.push(res[i].last_name);
+      managerArr.push(res[i].last_name);
     }
   })
-  return managersArr;
+  return managerArr;
 }
 
-//********************************************* */
 //********************************************** */
 managerArray = [];
 const chooseManager = () => {
@@ -318,10 +384,6 @@ function selectRole() {
   })
   return roleArray;
 }
-
-
-
-
 //*********************************************/
 
 addEmployee = () => {
