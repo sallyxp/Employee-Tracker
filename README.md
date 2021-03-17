@@ -6,13 +6,17 @@ The task was to create a database from the assigned schema and the command line 
  - view departments, roles, employees
  - update employee roles 
 
+#The database Schema#
+
+![alt text](/Images/Schema.png)
+
  In addition some bonus features were also requested:
  - update employee manager
  - view employee by manager
  - deletion of employees
  - view the total utilized budget of a department - ie total salaries by department
 
- A seed file populating the database with some inital data has also been created.
+ A seed file was used to populate the database with some inital data has also been created.
 
  As this application won't be deployed, links are provided showing walkthrough videos that demonstrate the functionality:
 
@@ -36,36 +40,82 @@ The database schema should match the given design below
 - [Credits](#Credits) 
 - [Contributing](#contributing)
 - [Authors](#authors)
-- [Screenshots](#screenshots)
 - [Contact Me](#contact-me)
-💾 Installation
-In order to install this app, the user must have all of the following installed and running on their local machines successfully:
+
 ## *Installation*
 The user must clone all files from this repository.  It is important that the file locations remain the same in relation to each other.
 
-To run, node.js must be installed. The file index.js must be downloaded to a directory. Open the command line (within the same directory as index.js).  inquirer must first be installed before running by typing npm i inquirer in the same directory.
+To run the program, the database must be running.  I have written the program using MySQL Workbench so I have included this below.  
 
-Then type _node index.js_ to run.  The questions will then be generated with prompts for the user to respond. _CTRL-C_ can terminate the program at any point.
+## To start MySQL Workbench (to run the database) ##
+Open the XAMPP Control Panel, if user uses Windows, to 'Start' MySQL to connect in the Node terminal
 
-NB The package.json is set up correctly to run the program and tests.  Should there be a problem _npm init_ can be used to create another.
+![alt text](/Images/2XAMPP.png) 
 
-need to review:  XX
-Git bash (or terminal), to pull this app from Github
-Visual Studio Code (VSC), to view the code
-Node.js, to run the commands and inquirer prompts
-MySQL Workbench, to run the database
-XAMPP Control Panel, if user uses Windows, to 'Start' MySQL to connect in the Node terminal
-After having set up all of the above, install the following packages and dependancies:
+To run, node.js must be installed. The file index.js must be downloaded to a directory. Open the command line (within the same directory as index.js).  inquirer must first be installed before running by typing `npm i inquirer` in the same directory.
 
-package.json (for node modules):
-npm install
-mysql
 
-inquirer, to prompt user questions in node
-npm install inquirer
+Then type `node index.js` to run.  The questions will then be generated with prompts for the user to respond. `CTRL-C` can terminate the program at any point.
 
-console.table, to view databases in node
-npm install console.table
+![alt text](/Images/OpeningScreen.png) 
+
+NB The package.json is set up correctly to run the program and tests.  Should there be a problem `npm init` can be used to create another.
+
+Once running, the following Menu choices will be displayed:
+![alt text](/Images/MenuChoices.png) 
+
+## Menu Choices: ##
+Add a new department
+Adds a new department record to the department table.
+
+Add a new role
+Adds a new role record to the role table.
+
+Add a new employee
+Adds a new employee record to the employee table.
+
+Delete an employee
+Deletes a specific employee based on user choice
+
+Show detailed employee info
+![alt text](/Images/ShowDetailedEmployeeInformation.png) 
+
+Total budget by department
+Shows the combined salaries of all the employees by department.
+![alt text](/Images/Totalsalary.png) 
+
+View departments
+Shows all records in the department table.
+
+View employees
+Shows all records in the employee table, including id numbers.
+
+View employees by manager
+Shows all records in the employee table by manager.
+
+View roles
+Shows all records in the roles table.
+
+Update employee manager
+Allows the user to change the manager of an employee.  The user selects the manager and has to submit the employee id to be updated.
+
+![alt text](/Images/Updatemanager.png) 
+
+Update employee roles
+Allows the user to change their role in a similar way to Update employee manager above.
+
+End
+This closes the application.
+
+## Packages ##
+ "chalk": "^4.1.0", - used for a colour title
+
+    "console.table": "^0.10.0", - for displaying query data
+
+    "inquirer": "^8.0.0", - for presenting questions to the user and processing responses
+
+    sequelize - for SQL queries
+    "mysql": "^2.18.1" - for SQL queries
 
 ## *Contributing and Questions*
 For any suggestions or questions, please feel free to contact me via my Github page. (github.com/sallyxp)
@@ -76,9 +126,6 @@ Opening each selection and running and checking the output is as expected
 ## *Authors*
 Sally Rodgers
 
-## *Screenshot*
-![alt text](/Images/TeamHogworts.png)
-![alt text](/Images/Prompts.png) 
 
 ## *Contact Me*
 - Github: **[sallyxp](github.com/sallyxp)
