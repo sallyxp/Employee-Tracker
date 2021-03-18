@@ -10,7 +10,7 @@ const log = console.log;
 const connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
-    user: 'root',
+    user: '',
     password: '',
     database: "employeetracker_db"
 })
