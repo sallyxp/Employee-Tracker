@@ -15,10 +15,11 @@ VALUES ("Sales Lead", 100000, 3),
 ("Lead Engineer", 150000, 2),
 ("Software Engineer", 120000, 3);
 
-USE employeetracker_db;
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
+USE ffs_db;
+INSERT INTO restaurant (name, location)
 VALUES 
-("Ashley", "Rodriguez", 3, null);
+("Burgess Burgers2", "Birmingham");
+
 
 USE employeetracker_db;
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -34,3 +35,5 @@ VALUES ("Kevin", "Tupik", 4, 3);
 
 
 ("Kevin", "Tupik", 4, 3);
+
+select 
