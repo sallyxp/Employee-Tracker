@@ -4,7 +4,7 @@ Creation of a Content Management System (CMS) to manage a company's employees us
 The task was to create a database from the assigned schema and the command line application should allow the users to:
  - add departments, roles, employees
  - view departments, roles, employees
- - update employee roles 
+ - update employee roles. 
 
 #The database Schema#
 
@@ -53,7 +53,6 @@ Open the XAMPP Control Panel, if user uses Windows, to 'Start' MySQL to connect 
 ![alt text](/Images/2XAMPP.png) 
 
 To run, node.js must be installed. The file index.js must be downloaded to a directory. Open the command line (within the same directory as index.js).  inquirer must first be installed before running by typing `npm i inquirer` in the same directory.
-
 
 Then type `node index.js` to run.  The questions will then be generated with prompts for the user to respond. `CTRL-C` can terminate the program at any point.
 
