@@ -187,7 +187,7 @@ const showDetailedEmployees = () => {
 
 
 
-//******************************************** 
+//********************************************** 
 // View Total Budget by Department
 //**********************************************
 
@@ -303,8 +303,9 @@ function deleteEmployee() {
 // Update roles in the Employee table
 //*********************************************
 function updateEmployeeRole() {
+//********************************************** */
 // UPDATE EMPLOYEE ROLE
-//************************************************************************* */
+//********************************************** */
     connection.query(
         "SELECT * FROM employee;",
         (err, res) => {
@@ -373,7 +374,7 @@ const chooseManager = () => {
 //*************************************************** */
 // role list
 //select role from array list
-//********************************************* */
+//*************************************************** */
 let roleArray = [];                                            
 function selectRole() {
   connection.query("SELECT * FROM role", function(err, res) {
